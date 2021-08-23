@@ -38,12 +38,12 @@ namespace Streams.Players.Mjpeg
 			}
 		}
 
-		public void StopAsync()
+		public void Stop()
 		{
 			playVideo = false;
 		}
 
-		private void ProcessData(MjpegFramedata frame, byte[] buffer, int bufferDataLength)
+		public void ProcessData(MjpegFramedata frame, byte[] buffer, int bufferDataLength)
 		{
 			int bufferDataPos = 0;
 
@@ -84,7 +84,7 @@ namespace Streams.Players.Mjpeg
 			}
 		}
 
-		private FindMarkResult FindSignedMark(byte[] buffer, bool signFound, byte target, int dataLength, int startPosition = 0)
+		public FindMarkResult FindSignedMark(byte[] buffer, bool signFound, byte target, int dataLength, int startPosition = 0)
 		{
 			if(buffer == null)
 			{
@@ -96,7 +96,7 @@ namespace Streams.Players.Mjpeg
 				throw new ArgumentOutOfRangeException(nameof(startPosition), $"The {nameof(startPosition)} ({startPosition}) is longer than the buffer length ({buffer.Length})");
 			}
 
-			if(dataLength >= buffer.Length)
+			if(dataLength > buffer.Length)
 			{
 				throw new ArgumentOutOfRangeException(nameof(dataLength), $"The {nameof(dataLength)} ({dataLength}) is longer than the buffer length ({buffer.Length})");
 			}
@@ -126,7 +126,7 @@ namespace Streams.Players.Mjpeg
 			return new FindMarkResult { Position = pos, SignFound = signFound, TargetFound = false, BufferIsOver = true };
 		}
 
-		private void FrameReady(MjpegFramedata frame)
+		public void FrameReady(MjpegFramedata frame)
 		{
 			if(OnFrameReady == null)
 			{

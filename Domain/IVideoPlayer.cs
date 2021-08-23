@@ -10,6 +10,6 @@ namespace Domain
 
 		Task PlayAsync();
 
-		void StopAsync();
+		void Stop();
 	}
 }
