@@ -33,7 +33,7 @@ namespace Streams.Players.Mjpeg
 				while (playVideo)
 				{
 					int dataLength = await dataProvider.ReadAsync(buffer, cancellationToken);
-					ProcessData(frame, buffer, dataLength);
+					ProcessData(ref frame, buffer, dataLength);
 				}
 			}
 		}
@@ -43,7 +43,7 @@ namespace Streams.Players.Mjpeg
 			playVideo = false;
 		}
 
-		public void ProcessData(MjpegFramedata frame, byte[] buffer, int bufferDataLength)
+		public void ProcessData(ref MjpegFramedata frame, byte[] buffer, int bufferDataLength)
 		{
 			int bufferDataPos = 0;
 
@@ -51,7 +51,7 @@ namespace Streams.Players.Mjpeg
 			{
 				if (frame.Buffer == null)
 				{
-					FindMarkResult searhBeginingResult = FindSignedMark(buffer, frame.SignFound, MjpegMarkers.Start, bufferDataLength);
+					FindMarkResult searhBeginingResult = FindSignedMark(buffer, frame.SignFound, MjpegMarkers.Start, bufferDataLength, bufferDataPos);
 
 					if (searhBeginingResult.TargetFound == false)
 					{
@@ -75,6 +75,7 @@ namespace Streams.Players.Mjpeg
 				int copyLength = bufferDataLength - bufferDataPos;
 				Array.Copy(buffer, bufferDataPos, frame.Buffer, frame.CurrentBufferPos, copyLength);
 				frame.CurrentBufferPos = frame.CurrentBufferPos + copyLength;
+				bufferDataPos = bufferDataPos + copyLength;
 
 				if (searchEndingResult.TargetFound)
 				{
@@ -126,9 +127,11 @@ namespace Streams.Players.Mjpeg
 			return new FindMarkResult { Position = pos, SignFound = signFound, TargetFound = false, BufferIsOver = true };
 		}
 
+		public bool IsPlaying { get => playVideo;  }
+
 		public void FrameReady(MjpegFramedata frame)
 		{
-			if(OnFrameReady == null)
+			if (OnFrameReady == null)
 			{
 				return;
 			}

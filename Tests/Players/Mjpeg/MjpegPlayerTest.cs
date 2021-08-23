@@ -64,13 +64,20 @@ namespace Tests.Players.Mjpeg
 
 			MjpegFramedata frame = new MjpegFramedata();
 
+			int counter = 0;
+
 			player.OnFrameReady += (Image image) => 			{
+				counter++;
 				player.Stop();
 				Assert.IsNotNull(image);
 			};
 
-
 			await player.PlayAsync();
+
+			Assert.AreEqual(1, counter);
+			Assert.IsFalse(player.IsPlaying);
+
+			//Thread.Sleep(100);
 			//Assert.AreEqual(true, result.TargetFound);
 			//Assert.AreEqual(false, result.BufferIsOver);
 			//Assert.AreEqual(7, result.Position);

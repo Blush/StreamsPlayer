@@ -21,6 +21,8 @@ namespace WinPlayer
 			InitializeComponent();
 
 			//http://86.127.235.69/mjpg/video.mjpg
+			//http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi
+			//http://webcam1.lpl.org/axis-cgi/mjpg/video.cgi
 			StreamDataProviderFactory providerFactory = new StreamDataProviderFactory("http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi");
 			CancellationTokenSource tokenSource = new CancellationTokenSource();
 			player = new MjpegPlayer(providerFactory, tokenSource.Token, 1024*1024);
