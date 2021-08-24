@@ -18,12 +18,7 @@ namespace Tests.Players.Mjpeg
 	public class MjpegPlayerTest
 	{
 		private const byte DataByte = 0xD7;
-		//byte[] dataArray = new[] { DataByte, DataByte, MjpegMarkers.Sign, MjpegMarkers.Start, DataByte, DataByte, MjpegMarkers.Sign, MjpegMarkers.End, DataByte };
 
-		[SetUp]
-		public void Setup()
-		{
-		}
 
 		[Test]
 		public void FindSignedMark_FoundBeginning()
@@ -74,11 +69,6 @@ namespace Tests.Players.Mjpeg
 
 			Assert.AreEqual(1, counter);
 			Assert.IsFalse(player.IsPlaying);
-		}
-
-		private void Player_OnFrameReady(Image obj)
-		{
-			throw new NotImplementedException();
 		}
 
 		private byte[] GetDataArray(int addNoiseAtBegining = 0, int addNoiseAtEnding = 0)

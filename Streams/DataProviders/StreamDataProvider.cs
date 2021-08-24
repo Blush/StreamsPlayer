@@ -23,15 +23,8 @@ namespace Streams.DataProviders
 
 		public async Task<int> ReadAsync(byte[] buffer, CancellationToken cancellationToken)
 		{
-			try
-			{
 				await Init();
 				return await stream.ReadAsync(buffer, 0, bufferSize, cancellationToken);
-			}
-			catch(Exception ex)
-			{
-				throw;
-			}
 		}
 
 		public void Dispose()

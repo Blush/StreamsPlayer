@@ -29,32 +29,23 @@ namespace WinPlayer
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.panAddStream = new System.Windows.Forms.Panel();
-			this.tbxStreamUrl = new System.Windows.Forms.TextBox();
-			this.btnAddStream = new System.Windows.Forms.Button();
 			this.flPanPics = new System.Windows.Forms.FlowLayoutPanel();
+			this.btnAddStream = new System.Windows.Forms.Button();
+			this.tbxStreamUrl = new System.Windows.Forms.TextBox();
 			this.lblMessage = new System.Windows.Forms.Label();
+			this.panAddStream = new System.Windows.Forms.Panel();
 			this.panAddStream.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// panAddStream
+			// flPanPics
 			// 
-			this.panAddStream.Controls.Add(this.lblMessage);
-			this.panAddStream.Controls.Add(this.tbxStreamUrl);
-			this.panAddStream.Controls.Add(this.btnAddStream);
-			this.panAddStream.Dock = System.Windows.Forms.DockStyle.Top;
-			this.panAddStream.Location = new System.Drawing.Point(0, 0);
-			this.panAddStream.Name = "panAddStream";
-			this.panAddStream.Size = new System.Drawing.Size(982, 72);
-			this.panAddStream.TabIndex = 0;
-			// 
-			// tbxStreamUrl
-			// 
-			this.tbxStreamUrl.Location = new System.Drawing.Point(0, 0);
-			this.tbxStreamUrl.Name = "tbxStreamUrl";
-			this.tbxStreamUrl.Size = new System.Drawing.Size(863, 23);
-			this.tbxStreamUrl.TabIndex = 0;
-			this.tbxStreamUrl.Text = "http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi";
+			this.flPanPics.AutoScroll = true;
+			this.flPanPics.AutoSize = true;
+			this.flPanPics.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flPanPics.Location = new System.Drawing.Point(0, 72);
+			this.flPanPics.Name = "flPanPics";
+			this.flPanPics.Size = new System.Drawing.Size(982, 386);
+			this.flPanPics.TabIndex = 1;
 			// 
 			// btnAddStream
 			// 
@@ -68,25 +59,33 @@ namespace WinPlayer
 			this.btnAddStream.UseVisualStyleBackColor = true;
 			this.btnAddStream.Click += new System.EventHandler(this.btnAddStream_Click);
 			// 
-			// flPanPics
+			// tbxStreamUrl
 			// 
-			this.flPanPics.AutoScroll = true;
-			this.flPanPics.AutoSize = true;
-			this.flPanPics.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flPanPics.Location = new System.Drawing.Point(0, 72);
-			this.flPanPics.Name = "flPanPics";
-			this.flPanPics.Size = new System.Drawing.Size(982, 386);
-			this.flPanPics.TabIndex = 1;
+			this.tbxStreamUrl.Location = new System.Drawing.Point(0, 0);
+			this.tbxStreamUrl.Name = "tbxStreamUrl";
+			this.tbxStreamUrl.Size = new System.Drawing.Size(863, 23);
+			this.tbxStreamUrl.TabIndex = 0;
 			// 
 			// lblMessage
 			// 
-			this.lblMessage.AutoSize = true;
 			this.lblMessage.Location = new System.Drawing.Point(0, 26);
 			this.lblMessage.Name = "lblMessage";
 			this.lblMessage.Padding = new System.Windows.Forms.Padding(3);
-			this.lblMessage.Size = new System.Drawing.Size(340, 21);
+			this.lblMessage.Size = new System.Drawing.Size(982, 43);
 			this.lblMessage.TabIndex = 4;
 			this.lblMessage.Text = "Enter stream URL into the text box and press the \"Add stream\"";
+			// 
+			// panAddStream
+			// 
+			this.panAddStream.Controls.Add(this.lblMessage);
+			this.panAddStream.Controls.Add(this.tbxStreamUrl);
+			this.panAddStream.Controls.Add(this.btnAddStream);
+			this.panAddStream.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panAddStream.Location = new System.Drawing.Point(0, 0);
+			this.panAddStream.Name = "panAddStream";
+			this.panAddStream.Size = new System.Drawing.Size(982, 72);
+			this.panAddStream.TabIndex = 0;
+			this.panAddStream.Resize += new System.EventHandler(this.panAddStream_Resize);
 			// 
 			// Form1
 			// 
@@ -105,12 +104,11 @@ namespace WinPlayer
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Panel panAddStream;
-		private System.Windows.Forms.TextBox tbxStreamUrl;
-		private System.Windows.Forms.Button btnAddStream;
 		private System.Windows.Forms.FlowLayoutPanel flPanPics;
+		private System.Windows.Forms.Button btnAddStream;
+		private System.Windows.Forms.TextBox tbxStreamUrl;
 		private System.Windows.Forms.Label lblMessage;
+		private System.Windows.Forms.Panel panAddStream;
 	}
 }
 

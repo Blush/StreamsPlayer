@@ -26,7 +26,8 @@ namespace WinPlayer
 
 		private void btnAddStream_Click(object sender, EventArgs e)
 		{
-			if (string.IsNullOrWhiteSpace(tbxStreamUrl.Text))
+			string url = tbxStreamUrl.Text;
+			if (string.IsNullOrWhiteSpace(url))
 				return;
 
 			MjpegPlayer player = null; ;
@@ -36,7 +37,7 @@ namespace WinPlayer
 			pictureBox.BackColor = Color.AliceBlue;
 			try
 			{
-				StreamDataProviderFactory providerFactory = new StreamDataProviderFactory(tbxStreamUrl.Text);
+				StreamDataProviderFactory providerFactory = new StreamDataProviderFactory(url);
 				CancellationTokenSource tokenSource = new CancellationTokenSource();
 				player = new MjpegPlayer(providerFactory, tokenSource.Token, 1024 * 1024);
 
@@ -57,14 +58,23 @@ namespace WinPlayer
 
 				player.OnError += (string message) =>
 				{
-					lblMessage.Text = $"Something went wrong and stream from URL {tbxStreamUrl.Text} was stopped due to reasone: {message}";
+					lblMessage.Invoke(new Action(() => 
+					{
+						lblMessage.Text = $"Something went wrong and stream from URL {url} was stopped due to reasone: {message}";
+						flPanPics.Controls.Remove(pictureBox);
+					}));
 				};
 
-				pictureBox.DoubleClick += (object sender, EventArgs e) => { player.Stop(); flPanPics.Controls.Remove(pictureBox); };
+				pictureBox.DoubleClick += (object sender, EventArgs e) => 
+				{
+					player.Stop();
+					flPanPics.Controls.Remove(pictureBox);
+					lblMessage.Text = $"Removed stream from URL {url}";
+				};
 				flPanPics.Controls.Add(pictureBox);
 				Task.Run(() => player.PlayAsync());
 				
-				lblMessage.Text = $"Stream {tbxStreamUrl.Text} was added to play. Double click to the video to remove.";
+				lblMessage.Text = $"Stream {url} was added to play. Double click to the video to remove.";
 				tbxStreamUrl.Text = exampleUrls.Any() ? exampleUrls.Pop() : String.Empty;
 			}
 			catch(Exception ex)
@@ -81,6 +91,11 @@ namespace WinPlayer
 
 				MessageBox.Show(ex.Message);
 			}
+		}
+
+		private void panAddStream_Resize(object sender, EventArgs e)
+		{
+			
 		}
 	}
 }

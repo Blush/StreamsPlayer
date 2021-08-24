@@ -28,19 +28,26 @@ namespace Streams.Players.Mjpeg
 		{
 			playVideo = true;
 			byte[] buffer = new byte[1024];
+			int maxErrors = 1;
+			int errorCounter = 0;
 			var frame = new MjpegFramedata();
 			using (IStreamDataProvider dataProvider = providerFactory.CreateDataProvider())
 			{
 				while (playVideo)
 				{
-					int dataLength = await dataProvider.ReadAsync(buffer, cancellationToken);
 					try
 					{
+						int dataLength = await dataProvider.ReadAsync(buffer, cancellationToken);
 						ProcessData(ref frame, buffer, dataLength);
 					}
 					catch(Exception ex)
 					{
-						Error(ex.Message);
+						errorCounter++;
+						if (errorCounter > maxErrors)
+						{
+							playVideo = false;
+							Error(ex.Message);
+						}
 					}
 				}
 			}

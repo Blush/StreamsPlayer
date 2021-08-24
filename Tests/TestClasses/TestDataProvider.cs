@@ -20,14 +20,7 @@ namespace Tests.TestClasses
 
 		public async Task<int> ReadAsync(byte[] buffer, CancellationToken cancellationToken)
 		{
-			try
-			{
-				return await stream.ReadAsync(buffer, 0, bufferSize, cancellationToken);
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
+			return await stream.ReadAsync(buffer, 0, bufferSize, cancellationToken);
 		}
 
 		public void Dispose()
