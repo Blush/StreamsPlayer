@@ -62,8 +62,6 @@ namespace Tests.Players.Mjpeg
 
 			Assert.IsNotNull(player);
 
-			MjpegFramedata frame = new MjpegFramedata();
-
 			int counter = 0;
 
 			player.OnFrameReady += (Image image) => 			{
@@ -76,11 +74,6 @@ namespace Tests.Players.Mjpeg
 
 			Assert.AreEqual(1, counter);
 			Assert.IsFalse(player.IsPlaying);
-
-			//Thread.Sleep(100);
-			//Assert.AreEqual(true, result.TargetFound);
-			//Assert.AreEqual(false, result.BufferIsOver);
-			//Assert.AreEqual(7, result.Position);
 		}
 
 		private void Player_OnFrameReady(Image obj)

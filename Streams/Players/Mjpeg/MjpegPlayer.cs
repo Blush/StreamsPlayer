@@ -22,6 +22,7 @@ namespace Streams.Players.Mjpeg
 		}
 
 		public event Action<Image> OnFrameReady;
+		public event Action<string> OnError;
 
 		public async Task PlayAsync()
 		{
@@ -39,7 +40,7 @@ namespace Streams.Players.Mjpeg
 					}
 					catch(Exception ex)
 					{
-						throw;
+						Error(ex.Message);
 					}
 				}
 			}
@@ -136,7 +137,7 @@ namespace Streams.Players.Mjpeg
 
 		public bool IsPlaying { get => playVideo;  }
 
-		public void FrameReady(MjpegFramedata frame)
+		private void FrameReady(MjpegFramedata frame)
 		{
 			if (OnFrameReady == null)
 			{
@@ -157,5 +158,15 @@ namespace Streams.Players.Mjpeg
 			Task.Run(() => OnFrameReady(img));
 		}
 
+		private void Error(string message)
+		{
+			Stop();
+
+			if (OnError == null)
+				return;
+
+			Task.Run(() => OnError(message));
+
+		}
 	}
 }

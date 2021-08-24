@@ -2,11 +2,8 @@
 using Streams.Players.Mjpeg;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,16 +12,16 @@ namespace WinPlayer
 {
 	public partial class Form1 : Form
 	{
+		private Stack<string> exampleUrls = new Stack<string>(new[]
+		{   "http://86.127.235.69/mjpg/video.mjpg",
+			"http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi",
+			"http://webcam1.lpl.org/axis-cgi/mjpg/video.cgi"
+		});
+
 		public Form1()
 		{
 			InitializeComponent();
-		}
-
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-
-
+			tbxStreamUrl.Text = exampleUrls.Pop();
 		}
 
 		private void btnAddStream_Click(object sender, EventArgs e)
@@ -34,17 +31,41 @@ namespace WinPlayer
 
 			MjpegPlayer player = null; ;
 			PictureBox pictureBox = new PictureBox();
+			pictureBox.Width = 800;
+			pictureBox.Height = 600;
+			pictureBox.BackColor = Color.AliceBlue;
 			try
 			{
 				StreamDataProviderFactory providerFactory = new StreamDataProviderFactory(tbxStreamUrl.Text);
 				CancellationTokenSource tokenSource = new CancellationTokenSource();
 				player = new MjpegPlayer(providerFactory, tokenSource.Token, 1024 * 1024);
 
-				player.OnFrameReady += (Image img) => { pictureBox.Image = img; };
-				pictureBox.DoubleClick += (object sender, EventArgs e) => { player.Stop(); flPanPics.Controls.Remove(pictureBox); };
+				bool resized = false;
+				player.OnFrameReady += (Image img) =>
+				{
+					pictureBox.Image = img;
+					if(resized == false)
+					{
+						pictureBox.Invoke(new Action(() =>
+						{
+							pictureBox.Width = img.Width;
+							pictureBox.Height = img.Height;
+						}));
+						resized = true;
+					}
+				};
 
+				player.OnError += (string message) =>
+				{
+					lblMessage.Text = $"Something went wrong and stream from URL {tbxStreamUrl.Text} was stopped due to reasone: {message}";
+				};
+
+				pictureBox.DoubleClick += (object sender, EventArgs e) => { player.Stop(); flPanPics.Controls.Remove(pictureBox); };
 				flPanPics.Controls.Add(pictureBox);
-				Task.Run(async () => await player.PlayAsync());
+				Task.Run(() => player.PlayAsync());
+				
+				lblMessage.Text = $"Stream {tbxStreamUrl.Text} was added to play. Double click to the video to remove.";
+				tbxStreamUrl.Text = exampleUrls.Any() ? exampleUrls.Pop() : String.Empty;
 			}
 			catch(Exception ex)
 			{
@@ -60,13 +81,6 @@ namespace WinPlayer
 
 				MessageBox.Show(ex.Message);
 			}
-
-
-			//http://86.127.235.69/mjpg/video.mjpg
-			//http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi
-			//http://webcam1.lpl.org/axis-cgi/mjpg/video.cgi
-
 		}
-
 	}
 }
