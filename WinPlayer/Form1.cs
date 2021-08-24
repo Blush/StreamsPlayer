@@ -15,20 +15,9 @@ namespace WinPlayer
 {
 	public partial class Form1 : Form
 	{
-		private MjpegPlayer player;
 		public Form1()
 		{
 			InitializeComponent();
-
-			//http://86.127.235.69/mjpg/video.mjpg
-			//http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi
-			//http://webcam1.lpl.org/axis-cgi/mjpg/video.cgi
-			StreamDataProviderFactory providerFactory = new StreamDataProviderFactory("http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi");
-			CancellationTokenSource tokenSource = new CancellationTokenSource();
-			player = new MjpegPlayer(providerFactory, tokenSource.Token, 1024*1024);
-
-			player.OnFrameReady += Player_OnFrameReady;
-			Task.Run(async () => await player.PlayAsync());
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -38,9 +27,46 @@ namespace WinPlayer
 
 		}
 
-		private void Player_OnFrameReady(Image obj)
+		private void btnAddStream_Click(object sender, EventArgs e)
 		{
-			pictureBox1.Image = obj;
+			if (string.IsNullOrWhiteSpace(tbxStreamUrl.Text))
+				return;
+
+			MjpegPlayer player = null; ;
+			PictureBox pictureBox = new PictureBox();
+			try
+			{
+				StreamDataProviderFactory providerFactory = new StreamDataProviderFactory(tbxStreamUrl.Text);
+				CancellationTokenSource tokenSource = new CancellationTokenSource();
+				player = new MjpegPlayer(providerFactory, tokenSource.Token, 1024 * 1024);
+
+				player.OnFrameReady += (Image img) => { pictureBox.Image = img; };
+				pictureBox.DoubleClick += (object sender, EventArgs e) => { player.Stop(); flPanPics.Controls.Remove(pictureBox); };
+
+				flPanPics.Controls.Add(pictureBox);
+				Task.Run(async () => await player.PlayAsync());
+			}
+			catch(Exception ex)
+			{
+				if(pictureBox != null && flPanPics.Contains(pictureBox))
+				{
+					flPanPics.Controls.Remove(pictureBox);
+				}
+
+				if(player?.IsPlaying == true)
+				{
+					player.Stop();
+				}
+
+				MessageBox.Show(ex.Message);
+			}
+
+
+			//http://86.127.235.69/mjpg/video.mjpg
+			//http://200.33.20.122:2007/axis-cgi/mjpg/video.cgi
+			//http://webcam1.lpl.org/axis-cgi/mjpg/video.cgi
+
 		}
+
 	}
 }
