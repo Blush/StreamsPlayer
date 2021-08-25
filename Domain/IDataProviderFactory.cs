@@ -2,6 +2,6 @@
 {
 	public interface IDataProviderFactory
 	{
-		IStreamDataProvider CreateDataProvider();
+		IStreamDataProvider CreateDataProvider(string url, int bufferSize = 1024);
 	}
 }

@@ -1,5 +1,6 @@
-﻿using Streams.DataProviders;
-using Streams.Players.Mjpeg;
+﻿using DI;
+using Domain;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,16 +31,17 @@ namespace WinPlayer
 			if (string.IsNullOrWhiteSpace(url))
 				return;
 
-			MjpegPlayer player = null; ;
+			IVideoPlayer player = null; ;
 			PictureBox pictureBox = new PictureBox();
 			pictureBox.Width = 800;
 			pictureBox.Height = 600;
 			pictureBox.BackColor = Color.AliceBlue;
 			try
 			{
-				StreamDataProviderFactory providerFactory = new StreamDataProviderFactory(url);
+				var services = Configurator.GetServiceProvider();
+
 				CancellationTokenSource tokenSource = new CancellationTokenSource();
-				player = new MjpegPlayer(providerFactory, tokenSource.Token, 1024 * 1024);
+				player = services.GetService<IVideoPlayer>();
 
 				bool resized = false;
 				player.OnFrameReady += (Image img) =>
@@ -72,7 +74,7 @@ namespace WinPlayer
 					lblMessage.Text = $"Removed stream from URL {url}";
 				};
 				flPanPics.Controls.Add(pictureBox);
-				Task.Run(() => player.PlayAsync());
+				Task.Run(() => player.PlayAsync(url, tokenSource.Token));
 				
 				lblMessage.Text = $"Stream {url} was added to play. Double click to the video to remove.";
 				tbxStreamUrl.Text = exampleUrls.Any() ? exampleUrls.Pop() : String.Empty;
@@ -91,11 +93,6 @@ namespace WinPlayer
 
 				MessageBox.Show(ex.Message);
 			}
-		}
-
-		private void panAddStream_Resize(object sender, EventArgs e)
-		{
-			
 		}
 	}
 }

@@ -45,13 +45,19 @@ namespace Tests.Players.Mjpeg
 			var result = player.FindSignedMark(dataArray, false, MjpegMarkers.End, dataArray.Length, 0);
 			Assert.AreEqual(true, result.TargetFound);
 			Assert.AreEqual(false, result.BufferIsOver);
-			Assert.AreEqual(dataArray.Length - 3, result.Position);
+
+			var theEndAt = dataArray.Length - 4;
+			Assert.AreEqual(MjpegMarkers.Sign, dataArray[theEndAt-1]);
+			Assert.AreEqual(MjpegMarkers.End, dataArray[theEndAt]);
+
+			Assert.AreEqual(theEndAt, result.Position);
 		}
 
 
 		[Test]
 		public async Task ProcessData_FoundEnding()
 		{
+			CancellationToken cancellationToken = CancellationToken.None;
 			var dataArray = GetDataArray(2, 3);
 			var player = GetPlayer(dataArray, 1024);
 
@@ -65,7 +71,7 @@ namespace Tests.Players.Mjpeg
 				Assert.IsNotNull(image);
 			};
 
-			await player.PlayAsync();
+			await player.PlayAsync("", cancellationToken);
 
 			Assert.AreEqual(1, counter);
 			Assert.IsFalse(player.IsPlaying);
@@ -103,7 +109,7 @@ namespace Tests.Players.Mjpeg
 		private IDataProviderFactory GetProviderFactory(byte[] dataArray, int bufferSize)
 		{
 			Mock<IDataProviderFactory> mockFactory = new Mock<IDataProviderFactory>();
-			mockFactory.Setup(it => it.CreateDataProvider()).Returns(new TestDataProvider(dataArray, bufferSize));
+			mockFactory.Setup(it => it.CreateDataProvider(It.IsAny<string>(), bufferSize)).Returns(new TestDataProvider(dataArray, bufferSize));
 			return mockFactory.Object;
 		}
 
@@ -115,8 +121,7 @@ namespace Tests.Players.Mjpeg
 
 		private MjpegPlayer GetPlayer(IDataProviderFactory providerFactory, int bufferSize)
 		{
-			CancellationToken cancellationToken = CancellationToken.None;
-			return new MjpegPlayer(providerFactory, cancellationToken, bufferSize);
+			return new MjpegPlayer(providerFactory, bufferSize);
 		}
 	}
 }

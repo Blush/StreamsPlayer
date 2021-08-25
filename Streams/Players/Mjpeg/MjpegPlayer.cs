@@ -10,28 +10,26 @@ namespace Streams.Players.Mjpeg
 	public class MjpegPlayer : IVideoPlayer
 	{
 		private readonly IDataProviderFactory providerFactory;
-		private readonly CancellationToken cancellationToken;
 		private readonly int frameBufferSize;
 		private bool playVideo;
 
-		public MjpegPlayer(IDataProviderFactory providerFactory, CancellationToken cancellationToken, int frameBufferSize)
+		public MjpegPlayer(IDataProviderFactory providerFactory, int frameBufferSize)
 		{
 			this.providerFactory = providerFactory;
-			this.cancellationToken = cancellationToken;
 			this.frameBufferSize = frameBufferSize;
 		}
 
 		public event Action<Image> OnFrameReady;
 		public event Action<string> OnError;
 
-		public async Task PlayAsync()
+		public async Task PlayAsync(string url, CancellationToken cancellationToken)
 		{
 			playVideo = true;
 			byte[] buffer = new byte[1024];
 			int maxErrors = 1;
 			int errorCounter = 0;
 			var frame = new MjpegFramedata();
-			using (IStreamDataProvider dataProvider = providerFactory.CreateDataProvider())
+			using (IStreamDataProvider dataProvider = providerFactory.CreateDataProvider(url))
 			{
 				while (playVideo)
 				{

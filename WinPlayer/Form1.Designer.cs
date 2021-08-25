@@ -85,7 +85,6 @@ namespace WinPlayer
 			this.panAddStream.Name = "panAddStream";
 			this.panAddStream.Size = new System.Drawing.Size(982, 72);
 			this.panAddStream.TabIndex = 0;
-			this.panAddStream.Resize += new System.EventHandler(this.panAddStream_Resize);
 			// 
 			// Form1
 			// 

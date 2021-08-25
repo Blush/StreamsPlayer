@@ -4,16 +4,11 @@ namespace Streams.DataProviders
 {
 	public class StreamDataProviderFactory : IDataProviderFactory
 	{
-		private readonly string url;
-		private readonly int bufferSize;
-
-		public StreamDataProviderFactory(string url, int bufferSize = 1024)
+		public StreamDataProviderFactory()
 		{
-			this.url = url;
-			this.bufferSize = bufferSize;
 		}
 
-		public IStreamDataProvider CreateDataProvider()
+		public IStreamDataProvider CreateDataProvider(string url, int bufferSize = 1024)
 		{
 			return new StreamDataProvider(url, bufferSize);
 		}

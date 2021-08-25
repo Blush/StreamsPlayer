@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Domain
@@ -8,8 +9,12 @@ namespace Domain
 	{
 		event Action<Image> OnFrameReady;
 
-		Task PlayAsync();
+		event Action<string> OnError;
+
+		Task PlayAsync(string url, CancellationToken cancellationToken);
 
 		void Stop();
+
+		bool IsPlaying { get; }
 	}
 }
